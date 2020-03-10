@@ -5,7 +5,6 @@ import java.util.ArrayList;
 /**
  * Sudoku represents a sudoku grid and has methods for generating, modifying
  * and solving games.
- * The game state is represented by a two dimensional ArrayList of Integers.
  * 
  * @author Johannes Skogman
  *
@@ -64,9 +63,8 @@ public class Sudoku {
 	}
 	
 	/**
-	 * Generates a random configuration of the board. The generated
-	 * board state is guaranteed to be solvable. Because of its naive 
-	 * implementation this method potentially takes a long time to execute.
+	 * Generates a random, solvable configuration of the board.
+	 * This method can potentially take a long time to execute.
 	 * 
 	 * @param nbrOfCells the number of non-empty cells left on the board
 	 */
@@ -107,7 +105,8 @@ public class Sudoku {
 	}
 	
 	/**
-	 * Randomize method without parameters. Sets the number of cells to 20.
+	 * Generates a random, solvable configuration of the board with 20 non-empty cells.
+	 * See {@link randomize(int)}.
 	 */
 	public void randomize() {
 		randomize(20);
@@ -115,8 +114,7 @@ public class Sudoku {
 	
 	/**
 	 * Generates a solution for the board if a solution exists, otherwise leaves
-	 * the board as is. The solver uses recursion with backtracking, and can potentially
-	 * take a long time to execute.
+	 * the board as is. The solver can potentially take a long time to execute.
 	 * 
 	 * @return boolean value indicating if a solution exists or not
 	 */
@@ -127,7 +125,10 @@ public class Sudoku {
 			return false;
 		}
 	}
-	
+	/*
+	 * Helper method for checking if the current board state is solvable
+	 * according to the rules of sudoku.
+	 */
 	private boolean solvable() {
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 9; j++) {
@@ -144,7 +145,7 @@ public class Sudoku {
 		}
 		return true;
 	}
-	
+
 	private boolean solve(int r, int c) {
 		if (c == 9) {
 			return solve(r + 1, 0);
