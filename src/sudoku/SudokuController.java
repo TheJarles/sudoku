@@ -40,7 +40,8 @@ public class SudokuController {
 			public void focusGained(FocusEvent e) {
 				Component field = e.getComponent();
 				Color currentColor = field.getBackground();
-				Color newColor = new Color(currentColor.getRed() - 25, currentColor.getGreen() - 25, currentColor.getBlue() - 25);
+				Color newColor = new Color(currentColor.getRed() - 25,
+					currentColor.getGreen() - 25, currentColor.getBlue() - 25);
 				field.setBackground(newColor);
 				((JTextField) (field)).setCaretColor(newColor);
 			}
@@ -48,7 +49,8 @@ public class SudokuController {
 			public void focusLost(FocusEvent e) {
 				Component field = e.getComponent();
 				Color currentColor = field.getBackground();
-				field.setBackground(new Color(currentColor.getRed() + 25, currentColor.getGreen() + 25, currentColor.getBlue() + 25));
+				field.setBackground(new Color(currentColor.getRed() + 25,
+					currentColor.getGreen() + 25, currentColor.getBlue() + 25));
 			}
 		};
 		
@@ -91,6 +93,7 @@ public class SudokuController {
 		gridPanel.setLayout(new GridLayout(3, 3));
 		gridPanel.setBorder(gridBorder);
 		
+		// create the buttons
 		JPanel buttonPanel = new JPanel();
 		JButton clear = new JButton("Clear");
 		clear.addActionListener(event -> {
@@ -103,12 +106,16 @@ public class SudokuController {
 		});
 		JButton randomize = new JButton("Randomize");
 		randomize.addActionListener(event -> {
-			sudoku.randomize();
-			for (int i = 0; i < 9; i++) {
-				for (int j = 0; j < 9; j++) {
-					int cellContent = sudoku.getCell(i, j);
-					String cellText = (cellContent == 0) ? null : Integer.toString(cellContent);
-					cells[i][j].setText(cellText);
+			int result = JOptionPane.showConfirmDialog(pane, "Randomizing could potentially take a LONG time. Proceed?",
+				"Warning", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+			if (result == JOptionPane.OK_OPTION) {
+				sudoku.randomize();
+				for (int i = 0; i < 9; i++) {
+					for (int j = 0; j < 9; j++) {
+						int cellContent = sudoku.getCell(i, j);
+						String cellText = (cellContent == 0) ? null : Integer.toString(cellContent);
+						cells[i][j].setText(cellText);
+					}
 				}
 			}
 		});
@@ -123,12 +130,13 @@ public class SudokuController {
 					}
 				}
 			} else {
-				JOptionPane.showMessageDialog(pane, "No solutions found", "No Solution", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(pane, "No solutions found",
+					"No Solution", JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
-		
 		buttonPanel.add(clear); buttonPanel.add(randomize); buttonPanel.add(solve);
 		
+		// Add panels to frame
 		pane.setLayout(new BorderLayout());
 		pane.add(gridPanel, BorderLayout.NORTH);
 		pane.add(buttonPanel, BorderLayout.SOUTH);

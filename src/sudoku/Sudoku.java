@@ -2,11 +2,21 @@ package sudoku;
 
 import java.util.ArrayList;
 
+/**
+ * Sudoku represents a sudoku grid and has methods for generating, modifying
+ * and solving games.
+ * The game state is represented by a two dimensional ArrayList of Integers.
+ * 
+ * @author Johannes Skogman
+ *
+ */
+
 public class Sudoku {
 	private ArrayList<ArrayList<Integer>> board;
-	
-	
-	
+
+	/**
+	 * Class constructor. Initializes the board with empty cells.
+	 */
 	public Sudoku() {
 		board = new ArrayList<ArrayList<Integer>>();
 		for (int i = 0; i < 9; i++) {
@@ -17,10 +27,24 @@ public class Sudoku {
 		}
 	}
 	
+	/**
+	 * Getter method for accessing specific cells on the board.
+	 * 
+	 * @param row the row of the cell
+	 * @param col the column of the cell
+	 * @return the value of the cell at (row, col) on the board
+	 */
 	public int getCell(int row, int col) {
 		return board.get(row).get(col);
 	}
 	
+	/**
+	 * Setter method for setting the value of a cell.
+	 * 
+	 * @param row the row of the cell
+	 * @param col the column of the cell
+	 * @param value the value assigned to the cell
+	 */
 	public void setCell(int row, int col, int value) {
 		if (value < 0 || value > 9) {
 			throw new IllegalArgumentException("Illegal value for cell: " + value);
@@ -28,6 +52,9 @@ public class Sudoku {
 		board.get(row).set(col, value);
 	}
 	
+	/**
+	 * Method for clearing all cell values on the board.
+	 */
 	public void clearBoard() {
 		for (ArrayList<Integer> row : board) {
 			for (int i = 0; i < 9; i++) {
@@ -36,6 +63,13 @@ public class Sudoku {
 		}
 	}
 	
+	/**
+	 * Generates a random configuration of the board. The generated
+	 * board state is guaranteed to be solvable. Because of its naive 
+	 * implementation this method potentially takes a long time to execute.
+	 * 
+	 * @param nbrOfCells the number of non-empty cells left on the board
+	 */
 	public void randomize(int nbrOfCells) {
 		if (nbrOfCells < 0 || nbrOfCells > 81) {
 			throw new IllegalArgumentException("Illegal number of cells: " + nbrOfCells);
@@ -72,10 +106,20 @@ public class Sudoku {
 		}
 	}
 	
+	/**
+	 * Randomize method without parameters. Sets the number of cells to 20.
+	 */
 	public void randomize() {
 		randomize(20);
 	}
 	
+	/**
+	 * Generates a solution for the board if a solution exists, otherwise leaves
+	 * the board as is. The solver uses recursion with backtracking, and can potentially
+	 * take a long time to execute.
+	 * 
+	 * @return boolean value indicating if a solution exists or not
+	 */
 	public boolean solve() {
 		if (solvable()) {
 			return solve(0, 0);
@@ -150,7 +194,10 @@ public class Sudoku {
 		return true;
 	}
 	
-	
+	/**
+	 * Prints the current board state to the console. Empty cells are
+	 * represented by "-".
+	 */
 	public void showBoard() {
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 9; j++) {
