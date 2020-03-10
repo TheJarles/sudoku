@@ -4,12 +4,10 @@ import java.util.ArrayList;
 
 public class Sudoku {
 	private ArrayList<ArrayList<Integer>> board;
-	private boolean changed;
 	
 	
 	
 	public Sudoku() {
-		changed = false;
 		board = new ArrayList<ArrayList<Integer>>();
 		for (int i = 0; i < 9; i++) {
 			board.add(new ArrayList<Integer>());
@@ -19,7 +17,7 @@ public class Sudoku {
 		}
 	}
 	
-	public Integer getCell(int row, int col) {
+	public int getCell(int row, int col) {
 		return board.get(row).get(col);
 	}
 	
@@ -55,10 +53,10 @@ public class Sudoku {
 				placed++;
 			}
 		}
-		// if solvable, remove random values from solution until nbrOfCells remain
-		// otherwise restart
-		boolean solvable = solve();
-		if (!solvable) {
+		/* if solvable, remove random values from solution until nbrOfCells remain
+		 * otherwise restart
+		 */
+		if (!solve()) {
 			randomize(nbrOfCells);
 		} else {
 			int removed = 0;
@@ -79,23 +77,6 @@ public class Sudoku {
 	}
 	
 	public boolean solve() {
-//		for (int i = 0; i < 9; i++) {
-//			for (int j = 0; j < 9; j++) {
-//				if (getCell(i, j) == 0) {
-//					for (int n = 1; n < 10; n++) {
-//						if (possible(i, j, n)) {
-//							setCell(i, j, n);
-//							if (solve()) {
-//								return true;
-//							}
-//							setCell(i, j, 0);
-//						}
-//					}
-//					return false;
-//				}
-//			}
-//		}
-//		return true;
 		if (solvable()) {
 			return solve(0, 0);
 		} else {
@@ -142,7 +123,7 @@ public class Sudoku {
 		return false;
 	}
 	
-	public boolean possible(int row, int col, int value) {
+	private boolean possible(int row, int col, int value) {
 		// check row
 		for (int i = 0; i < 9; i++) {
 			if (getCell(row, i) == value) {
