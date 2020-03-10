@@ -4,10 +4,12 @@ import java.util.ArrayList;
 
 public class Sudoku {
 	private ArrayList<ArrayList<Integer>> board;
+	private boolean changed;
 	
 	
 	
 	public Sudoku() {
+		changed = false;
 		board = new ArrayList<ArrayList<Integer>>();
 		for (int i = 0; i < 9; i++) {
 			board.add(new ArrayList<Integer>());
@@ -22,10 +24,8 @@ public class Sudoku {
 	}
 	
 	public void setCell(int row, int col, int value) {
-		// soft error, change later
 		if (value < 0 || value > 9) {
-			System.out.println("Illegal value for cell: " + value);
-			return;
+			throw new IllegalArgumentException("Illegal value for cell: " + value);
 		}
 		board.get(row).set(col, value);
 	}
@@ -38,24 +38,108 @@ public class Sudoku {
 		}
 	}
 	
+	public void randomize(int nbrOfCells) {
+		if (nbrOfCells < 0 || nbrOfCells > 81) {
+			throw new IllegalArgumentException("Illegal number of cells: " + nbrOfCells);
+		}
+		clearBoard();
+		int placed = 0;
+		// seed the board with 20 random values
+		while (placed < 20) {
+			java.util.Random r = new java.util.Random();
+			int row = r.nextInt(9);
+			int col = r.nextInt(9);
+			int value = r.nextInt(9) + 1;
+			if (possible(row, col, value) && getCell(row, col) == 0) {
+				setCell(row, col, value);
+				placed++;
+			}
+		}
+		// if solvable, remove random values from solution until nbrOfCells remain
+		// otherwise restart
+		boolean solvable = solve();
+		if (!solvable) {
+			randomize(nbrOfCells);
+		} else {
+			int removed = 0;
+			while (removed < 81 - nbrOfCells) {
+				java.util.Random r = new java.util.Random();
+				int row = r.nextInt(9);
+				int col = r.nextInt(9);
+				if(getCell(row, col) != 0) {
+					setCell(row, col, 0);
+					removed++;
+				}
+			}
+		}
+	}
+	
+	public void randomize() {
+		randomize(20);
+	}
+	
 	public boolean solve() {
+//		for (int i = 0; i < 9; i++) {
+//			for (int j = 0; j < 9; j++) {
+//				if (getCell(i, j) == 0) {
+//					for (int n = 1; n < 10; n++) {
+//						if (possible(i, j, n)) {
+//							setCell(i, j, n);
+//							if (solve()) {
+//								return true;
+//							}
+//							setCell(i, j, 0);
+//						}
+//					}
+//					return false;
+//				}
+//			}
+//		}
+//		return true;
+		if (solvable()) {
+			return solve(0, 0);
+		} else {
+			return false;
+		}
+	}
+	
+	private boolean solvable() {
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 9; j++) {
-				if (getCell(i, j) == 0) {
-					for (int n = 1; n < 10; n++) {
-						if (possible(i, j, n)) {
-							setCell(i, j, n);
-							if (solve()) {
-								return true;
-							}
-							setCell(i, j, 0);
-						}
+				int currentValue = getCell(i, j);
+				if (currentValue != 0) {
+					setCell(i, j, 0);
+					if (!possible(i, j, currentValue)) {
+						setCell(i, j, currentValue);
+						return false;
 					}
-					return false;
+					setCell(i, j, currentValue);
 				}
 			}
 		}
 		return true;
+	}
+	
+	private boolean solve(int r, int c) {
+		if (c == 9) {
+			return solve(r + 1, 0);
+		}
+		if(r == 9) {
+			return true;
+		}
+		if (getCell(r, c) != 0) {
+			return solve(r, c + 1);
+		}
+		for (int n = 1; n < 10; n++) {
+			if (possible(r, c, n) && getCell(r, c) == 0) {
+				setCell(r, c, n);
+				if (solve(r, c + 1)) {
+					return true;
+				}
+				setCell(r, c, 0);
+			}
+		}
+		return false;
 	}
 	
 	public boolean possible(int row, int col, int value) {
